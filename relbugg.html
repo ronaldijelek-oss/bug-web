@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEB BUG BY RELL</title>
+    <style>
+        /* CSS Styling - Tema Cyber */
+        body {
+            background-color: #0d1117; 
+            color: #00ff00; 
+            font-family: 'Consolas', 'Courier New', monospace; 
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .screen {
+            width: 90%;
+            max-width: 400px;
+            padding: 25px;
+            border-radius: 8px;
+            background-color: #161b22;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.7);
+            border: 1px solid #009900;
+            display: none;
+            transition: opacity 0.5s;
+        }
+
+        /* Layar 1 (Login) */
+        #screen1 { display: block; }
+        
+        .header {
+            text-align: center; margin-bottom: 30px; color: #00ff00;
+            font-size: 1.6em; text-shadow: 0 0 5px #00ff00;
+        }
+
+        .login-form input {
+            width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #009900;
+            background-color: #0d1117; color: #00ff00; border-radius: 4px; box-sizing: border-box;
+        }
+        
+        .login-form button {
+            width: 100%; padding: 12px; margin-top: 20px; border: none; border-radius: 4px;
+            background-color: #0088ff; color: white; font-weight: bold; cursor: pointer;
+        }
+
+        /* Error Message & Shake Animation */
+        #error-message {
+            color: #ff0000; text-align: center; margin-bottom: 10px; display: none;
+            font-size: 0.9em; text-shadow: 0 0 5px #ff0000;
+        }
+        .shake { animation: shake 0.5s; border: 1px solid #ff0000 !important; }
+        @keyframes shake {
+            0% { transform: translateX(0); } 20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); } 60% { transform: translateX(-10px); }
+            80% { transform: translateX(10px); } 100% { transform: translateX(0); }
+        }
+
+        /* Layar 2 (Menu) */
+        .status-box {
+            color: #ffcc00; text-align: center; margin-bottom: 25px; padding: 12px;
+            border: 2px solid #ffcc00; background-color: #0d1117; border-radius: 4px; font-size: 0.9em;
+        }
+
+        .input-group label {
+            display: block; margin-bottom: 8px; color: #00ff00;
+        }
+
+        .input-group input {
+            width: 100%; padding: 12px; border: 2px solid #009900; background-color: #0d1117;
+            color: #00ff00; border-radius: 4px; box-sizing: border-box; margin-bottom: 20px;
+        }
+        
+        /* Tombol Dropdown Utama */
+        #menuToggleBtn {
+            width: 100%; padding: 15px; margin-top: 10px; border: 2px solid #00ff00;
+            background-color: #004d00; color: #00ff00; font-size: 1.1em; font-weight: bold;
+            text-align: left; border-radius: 6px; cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        /* Menu Pilihan Dropdown */
+        .menu-options {
+            background-color: #1a1a1a; border: 1px solid #009900; margin-top: -1px; display: none;
+        }
+        
+        .menu-options button {
+            display: block; width: 100%; padding: 10px; background: none; border: none;
+            border-bottom: 1px solid #004d00; color: #00ff00; text-align: left; cursor: pointer;
+        }
+        .menu-options button:hover { background-color: #003300; }
+
+        /* Tombol SEND BUG (Aksi Utama) */
+        #sendBugBtn {
+            width: 100%; padding: 15px; margin-top: 20px; border: none; border-radius: 4px;
+            background-color: #ff0000; color: white; font-size: 1.2em; font-weight: bold;
+            cursor: pointer; box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        /* Loading & Done DERR Pop-ups */
+        #loading-popup {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background-color: #161b22; color: #00ff00; padding: 20px; border-radius: 10px;
+            border: 2px solid #00ff00; display: none; z-index: 1000;
+        }
+        .progress-bar {
+            width: 250px; height: 20px; background-color: #0d1117; border: 1px solid #00ff00;
+            border-radius: 3px; margin-top: 10px; overflow: hidden;
+        }
+        #progress { width: 0%; height: 100%; background-color: #ff0000; transition: width 0.1s linear; }
+        
+        #done-popup {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background-color: #ff0000; color: white; padding: 30px 40px; border-radius: 15px;
+            font-size: 2em; font-weight: bold; text-align: center; display: none; z-index: 1000;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8); animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse {
+            from { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            to { transform: translate(-50%, -50%) scale(1.05); opacity: 0.9; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="screen1" class="screen">
+        <div class="header">[ Please Log-in To Your Account ]</div>
+        
+        <div id="error-message">>>> ACCESS DENIED: INVALID CREDENTIALS <<<</div>
+
+        <form class="login-form" id="loginForm">
+            <input type="text" id="username" placeholder="USERNAME" required>
+            <input type="password" id="password" placeholder="PASSWORD" required>
+            <button type="submit">LOGIN</button>
+        </form>
+    </div>
+
+    <div id="screen2" class="screen">
+        <div class="header"> FLUNZA CRASH V1 </div>
+        
+        <div class="status-box">
+            <span style="color: #00ff00;">Role : OWNER</span>  ●  <span style="color: #ff0000;">Exp : 9956-9-999</span>
+        </div>
+        
+        <div class="input-group">
+            <label for="target-no">TARGET NUMBER:</label>
+            <input type="text" id="target-no" placeholder="Masukkan Nomor" required>
+        </div>
+        
+        <button id="menuToggleBtn" onclick="toggleMenu()">
+            > SELECT BUG: <span id="selectedOptionText" style="color:#FF0000; font-weight:normal;"</span>
+        </button>
+
+        <div id="menuOptions" class="menu-options">
+            <button data-payload="TRAVAS ANDROID" onclick="setPayload(this)"> CRASH ANDROID</button>
+            <button data-payload="TRAVAS IP" onclick="setPayload(this)"> CRASH IP</button>
+        </div>
+        
+        <button id="sendBugBtn" onclick="startSimulation()">SEND BUG</button>
+    </div>
+
+    <div id="loading-popup">
+        <div style="text-align: center;">[ INITIATING BUG ]</div>
+        <div class="progress-bar">
+            <div id="progress"></div>
+        </div>
+        <div style="text-align: center; margin-top: 5px;" id="loading-text">0%</div>
+    </div>
+
+    <div id="done-popup">BERHASIL!</div>
+
+    <script>
+        // JavaScript Logic
+        const correctUser = 'relloffc';
+        const correctPass = '100613';
+        const screen1 = document.getElementById('screen1');
+        const screen2 = document.getElementById('screen2');
+        const errorMessage = document.getElementById('error-message');
+        const loadingPopup = document.getElementById('loading-popup');
+        const progressBar = document.getElementById('progress');
+        const loadingText = document.getElementById('loading-text');
+        const targetNo = document.getElementById('target-no');
+        const menuOptionsDiv = document.getElementById('menuOptions');
+        const selectedOptionText = document.getElementById('selectedOptionText');
+        let selectedPayload = null; // Menyimpan payload yang dipilih
+        let selectedPayloadName = null; // Menyimpan nama yang akan ditampilkan
+
+        // --- Fungsi Login & Animasi Shake ---
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            if (user === correctUser && pass === correctPass) {
+                errorMessage.style.display = 'none';
+                screen1.style.display = 'none';
+                screen2.style.display = 'block';
+                screen1.classList.remove('shake');
+            } else {
+                errorMessage.style.display = 'block';
+                screen1.classList.add('shake');
+                setTimeout(() => { screen1.classList.remove('shake'); }, 500); 
+                setTimeout(() => { errorMessage.style.display = 'none'; }, 3000);
+            }
+        });
+
+        // --- Fungsi Toggle Dropdown Menu ---
+        function toggleMenu() {
+            menuOptionsDiv.style.display = menuOptionsDiv.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // --- Fungsi Memilih Payload (2 Opsi dalam 1 Tombol) ---
+        function setPayload(element) {
+            selectedPayload = element.getAttribute('data-payload');
+            selectedPayloadName = element.textContent;
+            selectedOptionText.textContent = selectedPayloadName;
+            selectedOptionText.style.color = '#00ff00';
+            toggleMenu(); // Tutup menu setelah memilih
+        }
+
+        // --- Fungsi Mulai Simulasi (Dipanggil Tombol SEND BUG) ---
+        function startSimulation() {
+            if (!targetNo.value) {
+                alert('ERROR: Target ID/Nomor harus diisi.');
+                return;
+            }
+            if (!selectedPayload) {
+                alert('ERROR: Pilih Payload Option dari menu dropdown terlebih dahulu.');
+                return;
+            }
+            
+            // Logika memulai loading
+            loadingPopup.style.display = 'block';
+            progressBar.style.width = '0%';
+            loadingText.textContent = '0%';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                if (progress > 100) {
+                    clearInterval(interval);
+                    loadingPopup.style.display = 'none';
+                    showDone(); 
+                    return;
+                }
+                
+                progressBar.style.width = progress + '%';
+                loadingText.textContent = progress + '%';
+            }, 100);
+        }
+        
+        // --- Fungsi Tampilkan Done DERR ---
+        function showDone() {
+            document.getElementById('done-popup').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('done-popup').style.display = 'none';
+                // Reset setelah selesai
+                selectedPayload = null;
+                selectedPayloadName = null;
+                selectedOptionText.textContent = '(Belum dipilih)';
+                selectedOptionText.style.color = '#FF0000';
+                targetNo.value = ''; // Mengosongkan input target
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
